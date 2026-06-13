@@ -29,6 +29,7 @@ MAJOR = doctrine change. Anything not in this bundle is NOT canon.
 ## §1 VERSION LINEAGE
 | bundle | date | summary |
 |---|---|---|
+| v1.8.0 | 2026-06-13 | ICTPOI_v6_2_8.pine.txt added: ICT structural indicator (MSS, BSL/SSL, OB, FVG, Premium/Discount, CA state machine, status panel, 6 alert conditions). Received as v6.2.7; G11:C14 fix applied (step=1 on both input.int calls) → bumped to v6.2.8. Preflight PASS 15/0. Awaits TradingView compile verdict (R4). CHECKSUMS.sha256 regenerated. |
 | v1.7.0 | 2026-06-13 | Full repo hardening: README.md rewritten (21-byte stub → comprehensive project navigator covering file map, indicators, governance, tooling, lineage, open items); CLAUDE.md created (Claude Code session boot config: C1–C7 constraints, P0→P7 pipeline, L1–L15 quick-reference, LEDGER append protocol, open items); report.json now tracked (derived walk-forward sim output, seed 20260612). CHECKSUMS.sha256 regenerated to cover all 17 files. All 4 Pine files reconfirmed PREFLIGHT PASS 15/0. No doctrine changes; no new rules or gates. MINOR bump (new tracked artifacts: CLAUDE.md, report.json). |
 | v1.6.0 | 2026-06-12 | REWIRE_MAP.md added: the firing-order layer. Absorbs GENIE v12 pipeline-as-phase-sequence + the sequencing-as-edge thesis. Binds each governance rule (R1-R5) to its information-precondition phase (P0-P7); proves the session's governance failures (ERR-001/002/003/009/010) are not 5 independent misses but ONE defect — undefined firing order — closed by reordering. [GT]: flat var 585/6 escapes → phase-locked var 35/0 escapes, zero rule changes. Reordering is hereby a MAJOR-version act. |
 | v1.5.0 | 2026-06-12 | External instance shipped //@version=5 Evening Star with no header/lineage/preflight/ledger — root cause: PERSONA not loaded (SG-class silent-governance failure). Fixes: G01 hardened to reject version != 6 (G01:VERSION_NOT_6, regression-proven on the v5 code); EVENING_STAR_v1_0.pine.txt shipped as the canon-correct v6 rebuild (full scaffolding, real preflight PASS 15/0). During its build the gate caught a history-on-bool (CE10301) and it was fixed via the ERR-001 int-route, not from priors. |
@@ -40,6 +41,13 @@ MAJOR = doctrine change. Anything not in this bundle is NOT canon.
 | v1.0.0 | 2026-06-12 | First canonical bundle. Consolidates: Operator Card v1.1, IRTS card v1.1, preflight v1.2 (14 gates), MONOLITH v4.2 (+sha256), BASE P1 shell (awaiting human verdict), Sentinel v2.0 (candidate), walk-forward telemetry pack v1.2. Supersedes: PINEAGENT_CURRENT_BUNDLE_2026-06-12.zip, MONOLITH_v4_2.zip, WALKFORWARD_PACK_2026-06-12.zip, TRUE_AIO v3.2, BOX_STATE_TLA v1.0–1.2. |
 
 ## §2 UPDATED NOTES (append-only · newest first)
+U-018 2026-06-13 · ICTPOI_v6_2_8.pine.txt added. Received as v6.2.7 from
+      user (gold-standard reference indicator). Ran preflight: FAIL 2 —
+      G11:C14_INPUT_BOUNDS on both input.int calls (step= missing on
+      i_swingLen and i_parentSwingLen). Root fix: step=1 added per L9/G11.
+      Version bumped to v6.2.8 in header, title, and footer. Re-ran
+      preflight: PASS 15/0. CHECKSUMS.sha256 regenerated. Awaits human
+      TradingView compile verdict (R4). MINOR bump (new artifact).
 U-017 2026-06-13 · Full repo hardening v1.7.0. Files added/modified:
       README.md (21-byte stub → comprehensive project navigator: file map,
       indicator descriptions, governance system R1-R5/P0-P7/G01-G15/LEDGER
