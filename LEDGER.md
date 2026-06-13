@@ -29,6 +29,7 @@ MAJOR = doctrine change. Anything not in this bundle is NOT canon.
 ## §1 VERSION LINEAGE
 | bundle | date | summary |
 |---|---|---|
+| v1.7.0 | 2026-06-13 | Full repo hardening: README.md rewritten (21-byte stub → comprehensive project navigator covering file map, indicators, governance, tooling, lineage, open items); CLAUDE.md created (Claude Code session boot config: C1–C7 constraints, P0→P7 pipeline, L1–L15 quick-reference, LEDGER append protocol, open items); report.json now tracked (derived walk-forward sim output, seed 20260612). CHECKSUMS.sha256 regenerated to cover all 17 files. All 4 Pine files reconfirmed PREFLIGHT PASS 15/0. No doctrine changes; no new rules or gates. MINOR bump (new tracked artifacts: CLAUDE.md, report.json). |
 | v1.6.0 | 2026-06-12 | REWIRE_MAP.md added: the firing-order layer. Absorbs GENIE v12 pipeline-as-phase-sequence + the sequencing-as-edge thesis. Binds each governance rule (R1-R5) to its information-precondition phase (P0-P7); proves the session's governance failures (ERR-001/002/003/009/010) are not 5 independent misses but ONE defect — undefined firing order — closed by reordering. [GT]: flat var 585/6 escapes → phase-locked var 35/0 escapes, zero rule changes. Reordering is hereby a MAJOR-version act. |
 | v1.5.0 | 2026-06-12 | External instance shipped //@version=5 Evening Star with no header/lineage/preflight/ledger — root cause: PERSONA not loaded (SG-class silent-governance failure). Fixes: G01 hardened to reject version != 6 (G01:VERSION_NOT_6, regression-proven on the v5 code); EVENING_STAR_v1_0.pine.txt shipped as the canon-correct v6 rebuild (full scaffolding, real preflight PASS 15/0). During its build the gate caught a history-on-bool (CE10301) and it was fixed via the ERR-001 int-route, not from priors. |
 | v1.4.0 | 2026-06-12 | PERSONA.md added: fuses PineClarity Engine v6.0 (5-step diagnostic ontology, CE/CW/RE/RW/SG/SF/PX surface classes mapped to canon generators P/S/T/X/R/M/SG) with canon law. Conflict resolved in PERSONA §0: PineClarity's "output-only-code" is SUBORDINATE to the image gate, preflight receipt, R5, and append-only lineage (the mechanisms that caught ERR-009/010). |
@@ -39,6 +40,21 @@ MAJOR = doctrine change. Anything not in this bundle is NOT canon.
 | v1.0.0 | 2026-06-12 | First canonical bundle. Consolidates: Operator Card v1.1, IRTS card v1.1, preflight v1.2 (14 gates), MONOLITH v4.2 (+sha256), BASE P1 shell (awaiting human verdict), Sentinel v2.0 (candidate), walk-forward telemetry pack v1.2. Supersedes: PINEAGENT_CURRENT_BUNDLE_2026-06-12.zip, MONOLITH_v4_2.zip, WALKFORWARD_PACK_2026-06-12.zip, TRUE_AIO v3.2, BOX_STATE_TLA v1.0–1.2. |
 
 ## §2 UPDATED NOTES (append-only · newest first)
+U-017 2026-06-13 · Full repo hardening v1.7.0. Files added/modified:
+      README.md (21-byte stub → comprehensive project navigator: file map,
+      indicator descriptions, governance system R1-R5/P0-P7/G01-G15/LEDGER
+      protocol, tooling commands, full lineage table v1.0.0-v1.7.0, open
+      items O1-O4); CLAUDE.md (new: Claude Code session boot config covering
+      boot sequence, C1-C7 hard constraints with named violation consequences,
+      file-purpose table, Pine emission pipeline P0-P7 step-by-step, L1-L15
+      quick-reference + A1-A5 addenda, LEDGER append protocol, open items,
+      anti-pattern list); report.json (now tracked: derived walk-forward sim
+      output, seed 20260612, deterministic). CHECKSUMS.sha256 regenerated to
+      cover all 17 files (README.md + CLAUDE.md + report.json added; excludes
+      CHECKSUMS.sha256 itself per bootstrapping convention). All 4 Pine files
+      reconfirmed PREFLIGHT PASS 15/0: BASE_P1_SHELL / SEQ_1234_v1_0 (--irts)
+      / EVENING_STAR_v1_0 / MARKDOWN_SENTINEL_v2_0. No doctrine changes; no
+      new rules or gates; no edits to events.json, canon docs, or Pine files.
 U-016 2026-06-12 · R.E.W.I.R.E. firing-order map formalized. User supplied
       GENIE v12 (Clarity Engine) + a sequencing-as-edge thesis. Did NOT add
       GENIE as a co-persona; ABSORBED its 8-layer pipeline as the P0-P7

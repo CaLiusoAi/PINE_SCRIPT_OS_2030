@@ -1,0 +1,161 @@
+{
+ "tiers": {
+  "GT": "measured from real session log",
+  "EX": "deterministic computation on GT",
+  "SYN": "Monte Carlo from GT-measured parameters \u2014 projection, not data"
+ },
+ "GT_regimes": {
+  "pre_governance_t1_14": {
+   "mean_q": 63.4,
+   "variance": 585.4,
+   "rot_slope": 0.04,
+   "escaped_failures": 6,
+   "turns": 14,
+   "p_fail_per_turn": 0.429
+  },
+  "post_governance_t15_24": {
+   "mean_q": 89,
+   "variance": 34.8,
+   "rot_slope": 0.35,
+   "escaped_failures": 0,
+   "turns": 10,
+   "p_fail_per_turn": 0.0
+  }
+ },
+ "GT_amnesia_evidence": "[GT] multiple '[Older tool result cleared to save context]' markers exist in this session's own history \u2014 earlier tool outputs were evicted from working context mid-session",
+ "EX_windows_w30": [
+  {
+   "window": "W30[t1-t24]",
+   "mean_q": 74.1,
+   "variance": 514.9,
+   "stdev": 22.7,
+   "min_q": 20,
+   "max_q": 94,
+   "rot_slope_q_per_turn": 1.59,
+   "failure_events": 6,
+   "amnesia_repeat_classes": 1,
+   "fabrication_events": 3,
+   "drawdown": 74
+  }
+ ],
+ "EX_windows_w150_note": "no real 150-turn window exists yet (24 GT turns) \u2014 see SYN",
+ "EX_domain_map": {
+  "architecture": {
+   "events": 8,
+   "mean_q": 79.5,
+   "variance": 367,
+   "failures": 2
+  },
+  "coding": {
+   "events": 7,
+   "mean_q": 67.7,
+   "variance": 711.6,
+   "failures": 2
+  },
+  "documentation": {
+   "events": 7,
+   "mean_q": 78.6,
+   "variance": 405.7,
+   "failures": 2
+  },
+  "governance": {
+   "events": 12,
+   "mean_q": 88,
+   "variance": 23.3,
+   "failures": 0
+  },
+  "image-grounding": {
+   "events": 6,
+   "mean_q": 65.5,
+   "variance": 498.6,
+   "failures": 2
+  },
+  "market-mechanics": {
+   "events": 2,
+   "mean_q": 67,
+   "variance": 25,
+   "failures": 1
+  },
+  "math": {
+   "events": 1,
+   "mean_q": 94,
+   "variance": 0,
+   "failures": 0
+  },
+  "trading-logic": {
+   "events": 5,
+   "mean_q": 49.4,
+   "variance": 495.0,
+   "failures": 3
+  }
+ },
+ "SYN_150turn_ablation": {
+  "ALL_5": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.0,
+   "median_slope": 0.007,
+   "median_escapes": 7.0,
+   "p_positive_progression": 0.672
+  },
+  "minus_R1": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.0,
+   "median_slope": 0.006,
+   "median_escapes": 8.0,
+   "p_positive_progression": 0.642
+  },
+  "minus_R2": {
+   "median_end_q": 16.1,
+   "p_ruin": 0.998,
+   "median_slope": -0.212,
+   "median_escapes": 16.0,
+   "p_positive_progression": 0.203
+  },
+  "minus_R3": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.098,
+   "median_slope": 0.012,
+   "median_escapes": 25.0,
+   "p_positive_progression": 0.573
+  },
+  "minus_R4": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.0,
+   "median_slope": 0.012,
+   "median_escapes": 7.0,
+   "p_positive_progression": 0.762
+  },
+  "minus_R5": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.005,
+   "median_slope": 0.004,
+   "median_escapes": 27.0,
+   "p_positive_progression": 0.545
+  },
+  "NONE": {
+   "median_end_q": 1.6,
+   "p_ruin": 1.0,
+   "median_slope": -0.012,
+   "median_escapes": 65.0,
+   "p_positive_progression": 0.258
+  }
+ },
+ "SYN_minimum_governance_set": "none found",
+ "SYN_24mo_5200turns": {
+  "all_5_rules": {
+   "median_end_q": 100.0,
+   "p_ruin": 0.0,
+   "median_slope": 0.0,
+   "median_escapes": 246.0,
+   "p_positive_progression": 0.533
+  },
+  "minimum_set": null,
+  "no_rules": {
+   "median_end_q": 1.6,
+   "p_ruin": 1.0,
+   "median_slope": -0.0,
+   "median_escapes": 2243.0,
+   "p_positive_progression": 0.483
+  }
+ }
+}
