@@ -1,0 +1,39 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENING STAR (CONFIRMED) v1.0
+// Lineage: PINEAGENT CANON · PERSONA (PineClarity Engine v6) · MONOLITH v4.2
+// Spec source: candlestick definition (no image) — textbook 3-bar reversal +
+//   next-bar confirmation. NOT image-grounded → no OBS citations required.
+// Status: mechanical preflight target. Awaits human TradingView verdict (R4).
+// Failure space F={P,S,T,X,R,M,SG}. Zero-error-first-compile mandate.
+// ═══════════════════════════════════════════════════════════════════════════
+indicator("EVENING STAR CONFIRMED v1.0", "EVSTAR", overlay=true, max_labels_count=500)
+
+// ── INPUTS ──────────────────────────────────────────────────────────────────
+smallBodyFrac = input.float(0.5, "Star body <= frac of bar-1 body", minval=0.05, maxval=1.0, step=0.05)
+deepFrac      = input.float(0.5, "Bar-3 close past bar-1 midpoint (frac)", minval=0.1, maxval=1.0, step=0.05)
+requireGap    = input.bool(true, "Require star gap-up vs bar-1")
+confirmEnable = input.bool(true, "Require next-bar close < star-3 low")
+
+// ── BODY MEASURES (global, every bar; bars: b1=[3] b2=[2] b3=[1] conf=[0]) ──
+float body1 = math.abs(close[3] - open[3])
+float body2 = math.abs(close[2] - open[2])
+float mid1  = open[3] + (close[3] - open[3]) * deepFrac
+
+// ── PATTERN CONDITIONS ──────────────────────────────────────────────────────
+bool bull1    = close[3] > open[3] and body1 > 0
+bool small2   = body2 <= body1 * smallBodyFrac
+bool bear3    = close[1] < open[1]
+bool deep3    = close[1] < mid1
+bool gapUp2   = not requireGap or (math.min(open[2], close[2]) > math.max(open[3], close[3]))
+bool eveningStar = barstate.isconfirmed and bull1 and small2 and bear3 and deep3 and gapUp2
+int  esFlag = eveningStar ? 1 : 0  // ERR-001 route: history on int, never on bool (CE10301)
+
+// confirmation evaluated on the bar AFTER the completed star (star flag = [1])
+bool confirm = barstate.isconfirmed and (nz(esFlag[1], 0) == 1) and (not confirmEnable or close < low[1])
+
+// ── OUTPUTS (global, const titles) ──────────────────────────────────────────
+plotshape(eveningStar, title="Evening Star", style=shape.labeldown, text="ES", color=color.red, textcolor=color.white, location=location.abovebar, size=size.small)
+plotshape(confirm, title="Confirmation", style=shape.labeldown, text="CONF", color=color.orange, textcolor=color.white, location=location.abovebar, size=size.small)
+alertcondition(confirm, title="EVSTAR: CONFIRMED", message="Evening Star confirmed: bearish follow-through closed below star low.")
+// ═══════════════════ END · deployment-readiness in chat ═════════════════════

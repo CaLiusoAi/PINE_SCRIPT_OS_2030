@@ -1,0 +1,143 @@
+═══════════════════════════════════════════════════════════════════════════
+THE CARD v2.1 — UNIFIED WORKING LAW · paste this ONE file every session
+Lineage: merges PINE_V6_OPERATOR_CARD v1.1 + IRTS_FORCING_CARD v1.1
+(both superseded; texts preserved verbatim below — proven law is not rewritten)
+═══════════════════════════════════════════════════════════════════════════
+
+── PART A · OPERATOR LAW ──
+═══════════════════════════════════════════════════════════════════════════
+PINE v6 OPERATOR CARD v1.1 — PASTE THIS WITH EVERY SESSION, EVERY INSTANCE
+Small enough to be fully read. The 1.5MB MONOLITH is the library;
+THIS is the working law. pine_preflight.py is the enforcement.
+═══════════════════════════════════════════════════════════════════════════
+
+PRIME DIRECTIVE
+  Your training is Pine v5-heavy. Distrust your priors. Never assert a
+  function signature from memory — verify or use the patterns below.
+  "Verified ✓" without a mechanical check attached is a fabrication.
+
+THE PIPELINE (mandatory order — no step may be skipped)
+  1. IMAGES FIRST (if any): PHASE 1 numbered observations (prices, levels,
+     wick ratios, bar positions) → PHASE 2 falsify each candidate condition
+     against observations → PHASE 3 every condition cites an observation
+     number or is deleted → only then PHASE 4 code.
+  2. WRITE code using only the patterns in this card.
+  3. RUN pine_preflight.py on the output. FAIL = emission forbidden.
+     Fix, re-run, repeat until PASS. Attach the PASS line to delivery.
+  4. On any TradingView error: paste verbatim → look up in taxonomy →
+     patch citing the rule ID → full re-emit → preflight again.
+
+THE 15 HARD LAWS (each one is a compiler kill or repaint trap)
+  L1  //@version=6 is line 1. Exactly one of indicator()/strategy()/library().
+  L2  shorttitle ≤ 10 characters.
+  L3  bool is two-state. NEVER `bool x = na`. NEVER na()/nz()/fixnan() on
+      bool. NEVER history [] on a bool. Int route: i = cond ? 1 : 0,
+      then nz(i[1], 0) == 1.   [CE10158/CE10163/CE10303 → fix CE10301]
+  L4  No implicit numeric↔bool. `if x` on a number = error. Use x != 0.
+      ta.change() returns a NUMBER — compare != 0.  [CE10101/CE10164]
+  L5  and/or SHORT-CIRCUIT in v6. Hoist every ta.*/stateful call out of
+      boolean expressions into its own global line first.
+  L6  ta.* and request.* calls: global scope, unconditional, every bar.
+      request.security: lookahead_off by default; lookahead_on is legal
+      ONLY with a [1]-offset source (the confirmed-HTF pattern).
+  L7  All state mutation in ONE block gated by barstate.isconfirmed.
+  L8  Objects (line/box/label/table): create under barstate.isfirst,
+      update under barstate.islast. Respect max_*_count.
+  L9  input.int/input.float: minval, maxval, step on every one.
+  L10 plot/plotshape/bgcolor/alertcondition: const string titles; these
+      calls live at global scope only — never inside if/for/functions.
+  L11 Indicator → alertcondition() only. Strategy → alert() in if block
+      only. Never mix.  [CE10155/CE10171]
+  L12 transp= is dead. color.new(color.red, 50). when= is dead — wrap
+      strategy.entry/close/order in an if block.  [CE10169]
+  L13 Division: 5/2 == 2.5 in v6. int(a/b) when truncation intended.
+      Guard every divisor: na/zero check before dividing.
+  L14 timeframe.period includes multiplier: compare "1D" never "D".
+      UDT history: (obj[1]).field never obj.field[1].
+  L15 No lookahead, no intrabar commitment, no partial emission. Complete
+      valid script or halt-and-classify into F={P,S,T,X,R,M,SG}.
+
+DELIVERY CONTRACT
+  Ship as .pine.txt with lineage header (version, patch log, observation
+  citations). Attach: preflight PASS line + rule-ID receipt for any patch.
+  An invalid artifact is more dangerous than no artifact.
+
+READ-PASS ADDENDA v1.1 (verbatim-read findings, 2026-06-12)
+  A1  input.source() returns SERIES float — never feed it to simple/input
+      parameters (e.g. ta lengths).
+  A2  indicator(timeframe=...) is ILLEGAL in a script that also uses
+      drawing objects or alert(). Use explicit request.security instead.
+  A3  Hard limits: 64 plot counts · 9 tables · 500 line/box/label IDs ·
+      100 polylines · 40 request.* calls (tuple = 1 call) · 500ms/bar
+      loops · 100k tokens · 1,000 vars per scope.
+  A4  Multiline: indented continuation is legal Pine; HOUSE emission
+      standard remains single-line statements; never START a line with
+      an operator.
+  A5  Typed na declarations (float x = na, line ln = na) are REQUIRED
+      patterns; "no bare na" applies at use-sites (guard/nz), not decls.
+
+═══════════════════════════════════════════════════════════════════════════
+END CARD — if this card and a model's memory disagree, the card wins. 🕯️
+═══════════════════════════════════════════════════════════════════════════
+
+── PART B · IMAGE LAW (images are ground truth) ──
+═══════════════════════════════════════════════════════════════════════════
+IRTS FORCING CARD v1.1 — PREFIX THIS TO EVERY IMAGE→CODE REQUEST
+Works on any AI instance. Removes the shortcut; does not rely on capability.
+Source: PineAgent_v6_IRTS.md (canon) + Phase 1.5 human gate (session-learned)
+═══════════════════════════════════════════════════════════════════════════
+
+Images are ground truth. Code is a hypothesis to falsify against them.
+Indicator names, pattern labels, and my annotations' WORDS are noise —
+the PIXELS and PRICES are the spec. Synthesis is topologically downstream
+of observation. You cannot skip ahead.
+
+MANDATORY SEQUENCE — each phase is a separate message turn:
+
+PHASE 1 — EXTRACT (no code, no interpretation)
+  Numbered table: OBS-01..OBS-nn. One measurable fact per line:
+  exact prices, body/wick sizes and ratios, candle colors, bar positions,
+  line/marker positions, hover-data OHLC, symbol, timeframe.
+  Tag each line [READ] (directly legible) or [EST] (estimated from pixels).
+  STOP. Output nothing else.
+
+PHASE 1.5 — HUMAN GATE (the anti-butchering lock)
+  The human confirms or corrects each OBS line.
+  Only the human-corrected table is citable downstream.
+  If the human says an OBS is wrong, it is wrong. No defense.
+  ⛔ No model may proceed past this line without explicit human approval.
+
+PHASE 2 — FALSIFY (no code)
+  Every candidate/existing condition → PASS / FAIL / AMBIGUOUS
+  against the APPROVED table only. One-line reason each.
+
+PHASE 3 — MAP (no code)
+  Pseudocode lines, each citing OBS numbers from the approved table.
+  No citation → UNSUPPORTED → deleted. AMBIGUOUS items become
+  questions to the human, not assumptions.
+
+PHASE 4 — SYNTHESIZE
+  Pine v6 code. EVERY condition carries a trailing comment:
+  // MAP-xx ← OBS-yy
+  Code with any uncited condition is invalid and must be rejected.
+  Run pine_preflight.py --irts on it: uncited condition = FAIL.
+
+NUMERAL RULE (anti observation-theater): every [READ] OBS row must
+  contain at least one literal number taken from the image (price, time,
+  ratio, bar count). An extraction with zero numerals is VOID on sight.
+GATE-FINALITY RULE: Phase 1.5 must be the LAST line of its message. Any
+  message containing Phase 1.5 plus later phases is VOID — the gate is a
+  wall, not a decoration around already-written code.
+PREFLIGHT-AUTHENTICITY RULE: preflight reports are pasted verbatim from
+  execution; gate IDs must exist in the registry (G01–G15). A report with
+  unknown gate IDs or no FAIL/PASS exit line is a fabrication (ERR-004).
+
+REJECTION RULE (the human enforces this):
+  Model outputs code before Phase 1.5 approval → reject, restart Phase 1.
+  Model lectures about anything not in the OBS table → reject, restart.
+  Model cites an OBS that doesn't exist → reject, restart.
+
+═══════════════════════════════════════════════════════════════════════════
+Why this works: extraction hallucination is upstream of synthesis
+hallucination. The human gate at 1.5 is the only check no model can fake.
+═══════════════════════════════════════════════════════════════════════════

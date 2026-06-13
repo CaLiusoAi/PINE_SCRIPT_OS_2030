@@ -1,0 +1,45 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════
+// SEQ-1234 EQUAL-HIGH REJECTION v1.0
+// Lineage: PineAgent CANON v1.3.0 · spec=SPEC_SEQ1234.md (OBS-01..11 certified)
+// Rulings: (a)="A" [human, 2026-06-12] · (b)="output similar to final image"
+// Target render = image 9: pins 1-4, magenta level line, red arrow on bar 4.
+// Supersedes MARKDOWN SENTINEL for this spec. Every condition cites MAP<-OBS.
+// ═══════════════════════════════════════════════════════════════════════════
+indicator("SEQ-1234 EQUAL-HIGH REJECTION v1.0", "SEQ-1234", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// ── INPUTS ──────────────────────────────────────────────────────────────────
+atrLen   = input.int(14, "ATR length", minval=1, maxval=200, step=1) // MAP-01 <- OBS-02
+impMult  = input.float(1.0, "Impulse body minimum (ATR x)", minval=0.1, maxval=10.0, step=0.1) // MAP-01 <- OBS-02, OBS-07
+tolTicks = input.int(0, "Equal-high tolerance (ticks; 0 = exact per spec)", minval=0, maxval=20, step=1) // MAP-03 <- OBS-04
+spanR    = input.int(4, "Level-line right span (bars)", minval=1, maxval=50, step=1) // MAP-06 <- OBS-05
+showShelf = input.bool(true, "Show orange close-shelf line") // MAP-07 <- OBS-09
+
+// ── GLOBAL SERIES (hoisted, unconditional — L5/L6) ──────────────────────────
+atrVal = ta.atr(atrLen) // MAP-01 <- OBS-02
+tol    = tolTicks * syminfo.mintick // MAP-03 <- OBS-04
+float body1 = math.abs(close[3] - open[3]) // MAP-01 <- OBS-02
+float body2 = math.abs(close[2] - open[2]) // MAP-02 <- OBS-03
+float level = high[2] // MAP-02 <- OBS-03 (C2 wick sets the level: 30,692.25 class)
+
+// ── SEQUENCE CONDITIONS (bars: C1=[3] C2=[2] C3=[1] C4=[0]) ─────────────────
+bool c1Imp  = bar_index > 3 and close[3] > open[3] and body1 >= impMult * atrVal // MAP-01 <- OBS-02, OBS-07
+bool c2Cont = close[2] > open[2] and close[2] > close[3] and body2 >= impMult * atrVal // MAP-02 <- OBS-03, OBS-07
+bool c3Eq   = close[1] > open[1] and math.abs(high[1] - level) <= tol // MAP-03 <- OBS-04 (equal high, green)
+bool c4Rej  = close < open and high <= level + tol and close < (open[1] + close[1]) / 2.0 // MAP-04 <- OBS-06, OBS-10
+bool seqFire = barstate.isconfirmed and c1Imp and c2Cont and c3Eq and c4Rej // MAP-05 <- OBS-06 (confirmed only)
+
+// ── CONSTRUCTION (image-9 render contract) ──────────────────────────────────
+if seqFire
+    label.new(bar_index - 3, low[3], "1", style=label.style_label_up, color=color.teal, textcolor=color.white, size=size.small) // MAP-08 <- OBS-10
+    label.new(bar_index - 2, low[2], "2", style=label.style_label_up, color=color.teal, textcolor=color.white, size=size.small) // MAP-08 <- OBS-10
+    label.new(bar_index - 1, high[1], "3", style=label.style_label_down, color=color.rgb(0, 188, 212), textcolor=color.white, size=size.small) // MAP-08 <- OBS-10
+    label.new(bar_index, high, "4", style=label.style_label_down, color=color.red, textcolor=color.white, size=size.small) // MAP-08 <- OBS-10
+    line.new(bar_index - 3, level, bar_index + spanR, level, color=color.rgb(255, 0, 255), width=2) // MAP-06 <- OBS-05, OBS-10
+    if showShelf
+        line.new(bar_index - 3, close, bar_index + spanR, close, color=color.orange, style=line.style_dotted, width=1) // MAP-07 <- OBS-09, OBS-10
+
+// ── GLOBAL OUTPUTS (const titles) ───────────────────────────────────────────
+plotshape(seqFire, title="SEQ-1234 rejection arrow", style=shape.arrowdown, location=location.abovebar, color=color.red, size=size.small) // MAP-09 <- OBS-08, OBS-10
+alertcondition(seqFire, title="SEQ-1234: REJECTION", message="SEQ-1234 equal-high rejection confirmed: bars 1-2 impulse, bar 3 equal high at level, bar 4 closed away. Construction drawn.") // MAP-10 <- OBS-08
+// ═══════════════ END · zero-error mandate · F={P,S,T,X,R,M,SG} ══════════════

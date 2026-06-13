@@ -1,0 +1,6 @@
+//@version=6
+// BASE-01 SHELL · rebuild piece 1/8 · proves: L1 version-first, L2 shorttitle,
+// single declaration, minimal legal output. Nothing else. HiL gate: must
+// compile clean on TradingView before piece 2 is built.
+indicator("CERTIFIED BASE SKELETON — P1 SHELL", "BASE-P1", overlay=true)
+plot(close, title="Base anchor (hidden)", display=display.none)

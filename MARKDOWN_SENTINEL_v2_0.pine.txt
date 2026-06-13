@@ -1,0 +1,118 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════
+// MARKDOWN SENTINEL v2.0 — Bearish Impulse & Rollover Detector
+// Lineage: PineAgent v6 · MONOLITH v4.1 · IRTS 4-Phase · supersedes BOX-TLA
+// Spec source: NQ1! 15m images 2026-06-12 (ground truth — red arrow markers)
+//   Obs1/4: waterfall legs (-930pt cascade; staircase markdown) → WATERFALL
+//   Obs2/3: failed-rebound lower-high rejections at shelf      → ROLLOVER
+//   Obs5  : arrows = dark-red, above-bar, bearish initiation   → plotshape
+//   Obs6  : arrows print after confirmation, never top-tick    → isconfirmed
+// Type-law receipts: CE10303 (na/nz/fixnan never on bool) · CE10301 (bool→int
+// route) · SHORT_TITLE_TOO_LONG (<=10 chars) · all inputs bounded (C14)
+// ═══════════════════════════════════════════════════════════════════════════
+indicator("MARKDOWN SENTINEL v2.0", "MKD-SNTL", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// ── INPUTS ──────────────────────────────────────────────────────────────────
+impLen  = input.int(6, "Waterfall window (bars)", minval=2, maxval=50, step=1, group="Waterfall Detector")
+atrLen  = input.int(14, "ATR length", minval=1, maxval=200, step=1, group="Waterfall Detector")
+atrMult = input.float(2.5, "Drop threshold (ATR x)", minval=0.5, maxval=20.0, step=0.1, group="Waterfall Detector")
+minRed  = input.int(4, "Min red closes in window", minval=1, maxval=50, step=1, group="Waterfall Detector")
+pivLen  = input.int(3, "Pivot strength (bars)", minval=1, maxval=10, step=1, group="Rollover Detector")
+
+// ── GLOBAL SERIES (unconditional — TA isolation law) ────────────────────────
+atrVal    = ta.atr(atrLen)
+dropMove  = nz(close[impLen], close) - close
+redRun    = math.sum(close < open ? 1.0 : 0.0, impLen)
+pHigh     = ta.pivothigh(high, pivLen, pivLen)
+phBarLow  = low[pivLen]
+wfRawNow  = dropMove > atrMult * nz(atrVal, 0.0) and redRun >= minRed
+
+// ── PERSISTENT STATE (int route only — no bool history anywhere) ────────────
+var float lastPH   = na    // most recent confirmed pivot high (invalidation)
+var float prevPH   = na    // prior pivot high (lower-high comparison)
+var float rejLevel = na    // pivot-bar low = breakdown trigger shelf
+var int   lhArmed  = 0     // 1 = lower-high armed, awaiting shelf break
+var int   wfCool   = 0     // waterfall one-shot cooldown
+var int   sigWf    = 0     // 1 on confirmed waterfall signal bar
+var int   sigRoll  = 0     // 1 on confirmed rollover signal bar
+var int   light    = 0     // -1 STOP · 0 WAIT · 1 READY · 2 FIRE (short)
+
+// ── COMMIT BLOCK (single mutation site — confirmed bars only, Obs6) ─────────
+if barstate.isconfirmed
+    if not na(pHigh)
+        prevPH   := lastPH
+        lastPH   := pHigh
+        rejLevel := phBarLow
+        lhArmed  := not na(prevPH) and not na(lastPH) and lastPH < prevPH ? 1 : 0
+    bool wfTrig = wfRawNow and wfCool == 0
+    sigWf  := wfTrig ? 1 : 0
+    wfCool := wfRawNow ? impLen : math.max(wfCool - 1, 0)
+    bool rollTrig = lhArmed == 1 and not na(rejLevel) and close < rejLevel
+    sigRoll := rollTrig ? 1 : 0
+    if rollTrig
+        lhArmed := 0
+    bool reclaim  = not na(lastPH) and close > lastPH
+    bool belowInv = na(lastPH) or close < lastPH
+    light := reclaim ? -1 : sigWf == 1 or sigRoll == 1 ? 2 : light == 2 and belowInv ? 2 : lhArmed == 1 ? 1 : 0
+
+// ── DERIVED LEVELS (global, display + alerts) ───────────────────────────────
+float effTarget = not na(lastPH) and not na(rejLevel) ? rejLevel - (lastPH - rejLevel) : na
+bool  confirmedBar = barstate.isconfirmed or barstate.ishistory
+bool  showWf   = sigWf == 1 and confirmedBar
+bool  showRoll = sigRoll == 1 and confirmedBar
+bool  showStop = light == -1 and nz(light[1], 0) != -1 and confirmedBar
+
+// ── VISUAL LAYER (create once on first bar, update on last bar) ─────────────
+var line  lnInv  = na
+var line  lnTrig = na
+var table tla    = na
+if barstate.isfirst
+    lnInv  := line.new(bar_index, close, bar_index + 1, close, extend=extend.right, color=color.new(color.red, 100), width=2, style=line.style_solid)
+    lnTrig := line.new(bar_index, close, bar_index + 1, close, extend=extend.right, color=color.new(color.orange, 100), width=1, style=line.style_dashed)
+    tla    := table.new(position.bottom_right, 2, 7, bgcolor=color.new(color.black, 15), border_width=1, border_color=color.new(color.gray, 50))
+if barstate.islast
+    bool showLv = not na(lastPH) and not na(rejLevel)
+    if showLv
+        line.set_xy1(lnInv, bar_index - 1, lastPH)
+        line.set_xy2(lnInv, bar_index, lastPH)
+        line.set_xy1(lnTrig, bar_index - 1, rejLevel)
+        line.set_xy2(lnTrig, bar_index, rejLevel)
+    line.set_color(lnInv, showLv ? color.red : color.new(color.red, 100))
+    line.set_color(lnTrig, showLv ? color.orange : color.new(color.orange, 100))
+    string ltTxt  = light == 2 ? "🟢 FIRE (SHORT)" : light == 1 ? "🟠 READY" : light == -1 ? "🔴 STOP" : "🟡 WAIT"
+    string mdTxt  = light == 2 ? "Markdown confirmed" : light == 1 ? "Lower high armed" : light == -1 ? "Breakdown invalidated" : "No bearish setup"
+    string whyTxt = light == 2 ? "Waterfall or shelf break on confirmed close" : light == 1 ? "Lower high in place, shelf intact" : light == -1 ? "Confirmed close back above lower high" : "No lower high, no impulse"
+    string doTxt  = light == 2 ? "Short entry allowed — execute plan" : light == 1 ? "Prepare short — wait for shelf break" : light == -1 ? "Stand down — do not chase shorts" : "Do nothing — observe"
+    string lvTxt  = not na(lastPH) ? "Inv " + str.tostring(lastPH, format.mintick) + (not na(rejLevel) ? " · Shelf " + str.tostring(rejLevel, format.mintick) : "") : "—"
+    string rkTxt  = not na(lastPH) ? "Confirmed close > " + str.tostring(lastPH, format.mintick) : "—"
+    string tgTxt  = na(effTarget) ? "—" : str.tostring(effTarget, format.mintick) + " (swing projected)"
+    color  hdBg   = color.new(color.gray, 40)
+    color  ltBg   = light == 2 ? color.new(color.green, 30) : light == 1 ? color.new(color.orange, 30) : light == -1 ? color.new(color.red, 30) : color.new(color.yellow, 60)
+    table.cell(tla, 0, 0, "LIGHT", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 0, ltTxt, text_color=color.white, text_size=size.small, bgcolor=ltBg)
+    table.cell(tla, 0, 1, "MODE", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 1, mdTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+    table.cell(tla, 0, 2, "WHY", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 2, whyTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+    table.cell(tla, 0, 3, "DO", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 3, doTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+    table.cell(tla, 0, 4, "LEVEL", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 4, lvTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+    table.cell(tla, 0, 5, "RISK", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 5, rkTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+    table.cell(tla, 0, 6, "TARGET", text_color=color.white, text_size=size.small, bgcolor=hdBg)
+    table.cell(tla, 1, 6, tgTxt, text_color=color.white, text_size=size.small, bgcolor=color.new(color.black, 15))
+
+// ── GLOBAL VISUAL OUTPUTS (const titles — the red arrows from the spec) ─────
+bgcolor(light == 2 ? color.new(color.red, 88) : light == 1 ? color.new(color.orange, 92) : light == -1 ? color.new(color.gray, 88) : na, title="Sentinel tint")
+plotshape(showWf, title="Waterfall markdown", style=shape.arrowdown, location=location.abovebar, color=color.maroon, size=size.normal)
+plotshape(showRoll, title="Rollover shelf break", style=shape.arrowdown, location=location.abovebar, color=color.red, size=size.small)
+plotshape(showStop, title="Invalidation reclaim", style=shape.xcross, location=location.belowbar, color=color.gray, size=size.small)
+
+// ── ALERTS (alertcondition only — const titles and messages) ────────────────
+alertcondition(showWf, title="MKD: WATERFALL", message="MARKDOWN SENTINEL: waterfall impulse confirmed — ATR-multiple drop with red-close majority. Short momentum live.")
+alertcondition(showRoll, title="MKD: ROLLOVER", message="MARKDOWN SENTINEL: lower-high rollover confirmed — close broke the pivot shelf. Short entry window open.")
+alertcondition(showStop, title="MKD: STAND DOWN", message="MARKDOWN SENTINEL: confirmed close back above the lower high — breakdown invalidated. Stand down.")
+// ═══════════════════════════════════════════════════════════════════════════
+// END · MARKDOWN SENTINEL v2.0 · zero-error mandate · F={P,S,T,X,R,M,SG}
+// ═══════════════════════════════════════════════════════════════════════════
